@@ -1,0 +1,251 @@
+{
+	"info": {
+		"_postman_id": "fac57b46-0ea9-4cfb-83ca-30540ef30169",
+		"name": "Otus-Idemp-Check",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3042142"
+	},
+	"item": [
+		{
+			"name": "Add Order Failed 417",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check response code\", function() {\r",
+							"    pm.response.to.have.status(417);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n    \"product\": \"Toy Soldier\",\r\n    \"quantity\": \"2\",\r\n    \"price\": \"150.35\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}:8080/otusapp/sadmitriev/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"port": "8080",
+					"path": [
+						"otusapp",
+						"sadmitriev",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reserve Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check response code\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    var jsonData = JSON.parse(responseBody);\r",
+							"    console.log(jsonData);\r",
+							"\r",
+							"    var temp = jsonData.orderId;\r",
+							"    console.log(temp);\r",
+							"    pm.collectionVariables.set(\"orderId\", temp);\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}:8080/otusapp/sadmitriev/orders/reserve",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"port": "8080",
+					"path": [
+						"otusapp",
+						"sadmitriev",
+						"orders",
+						"reserve"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Order Idempotent",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check response code\", function() {\r",
+							"    pm.response.to.have.status(201);\r",
+							"})\r",
+							"pm.test(\"Check content\", function() {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson.product).to.eql(\"Teddy Bear\")\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"orderId\": {{orderId}},\r\n    \"product\": \"Teddy Bear\",\r\n    \"quantity\": \"1\",\r\n    \"price\": \"2350.14\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}:8080/otusapp/sadmitriev/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"port": "8080",
+					"path": [
+						"otusapp",
+						"sadmitriev",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Order Failed 404",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check response code\", function() {\r",
+							"    pm.response.to.have.status(404);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{   \r\n    \"orderId\": 65,\r\n    \"product\": \"Toy Soldier\",\r\n    \"quantity\": \"2\",\r\n    \"price\": \"150.35\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}:8080/otusapp/sadmitriev/orders",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"port": "8080",
+					"path": [
+						"otusapp",
+						"sadmitriev",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check response code\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"})\r",
+							"pm.test(\"Check content\", function() {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson.product).to.eql(\"Teddy Bear\")\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}:8080/otusapp/sadmitriev/orders/{{orderId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"port": "8080",
+					"path": [
+						"otusapp",
+						"sadmitriev",
+						"orders",
+						"{{orderId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "arch.homework",
+			"type": "string"
+		},
+		{
+			"key": "orderId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

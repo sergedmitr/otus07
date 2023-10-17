@@ -5,8 +5,10 @@
 
 ## Описание
 Использую nfinx-ingress. Порт 32083.
-Данные об аутентификации храню в памяти в сервисе аутентификации.
 ### Использованный паттерн идемпотентности
+Предварительное резервирование ключа в БД и получение его на клиента.
+
+### Логика работы сервиса
 1. Клиент обращается в сервис с просьбой зарезервировать Id. POST /order/reserve
 2. Сервис создает в БД в таблице Orders запись с идентификатором и остальными пустыми полями и возвращает этот Id клиенту.
 3. Клиент заполняет Заказ и проставляет в него полученный Id.
@@ -26,9 +28,14 @@ kubectl apply -f kube-manifest/01_namespace_zipper.yaml
 helm install postgresql-test oci://registry-1.docker.io/bitnamicharts/postgresql --set auth.database=mydb,auth.postgresPassword=secretpassword -n zipper
 ```
 3. Написал свой сервис сохранения заказов на Java (my-order-worker-service)
+4. Создал секрет для доступа приложения к БД
+```shell
+kubectl create secret generic db-password --from-literal=password='secretpassword'
+```
 4. Установил приложение с помощью Helm в неймспейс zipper.
 ```shell
 helm install order-worker-local myapp/. -n zipper
+```
 5. Сделал коллекцию postman для проверки предложенного сценария (Otus-Idemp-Check.json)
 Для тестирования сделал проброс порта:
 ```shell
